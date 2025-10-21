@@ -3,6 +3,7 @@ package com.example.aulafirebase
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -26,9 +27,38 @@ class MainActivity : AppCompatActivity() {
         binding.btAlterar.setOnClickListener(){}
         binding.btExcluir.setOnClickListener(){}
         binding.btPesquisar.setOnClickListener(){}
-        binding.btListar.setOnClickListener(){}
+        binding.btListar.setOnClickListener(){
+            btListaOnClick()
+        }
 
 
+    }
+
+    private fun btListaOnClick() {
+        val saida = StringBuilder()
+
+        bd.collection("Pessoa")
+            .get() //recupera tudo
+            .addOnSuccessListener {  result ->
+                if(result.isEmpty){
+                    saida.append("Nenhum registro encontrado")
+                }else{
+                    for(document in result){
+                        saida.append("${document.data.get("nome")} " +
+                                "- ${document.data.get("telefone")}\n")
+                    }
+                }
+                AlertDialog.Builder(this)
+                    .setTitle("Lista de Pessoas")
+                    .setMessage(saida.toString())
+                    .setPositiveButton("Ok", null)
+                    .show()
+            }
+            .addOnFailureListener{ e ->
+                Toast.makeText(this,
+                    "Erro ao lista: ${e.localizedMessage}",
+                    Toast.LENGTH_LONG).show()
+            }
     }
 
     private fun btIncluirOnClick() {
