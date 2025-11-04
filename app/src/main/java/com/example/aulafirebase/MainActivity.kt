@@ -15,6 +15,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         auth = Firebase.auth
         credentialManager = CredentialManager.create(this)
+
+        manageToken()
 
         binding.btIncluir.setOnClickListener() {
             btIncluirOnClick()
@@ -53,6 +56,16 @@ class MainActivity : AppCompatActivity() {
         binding.btSair.setOnClickListener() {
             signOut()
         }
+    }
+
+    private fun manageToken() {
+        FirebaseMessaging.getInstance()
+            .token.addOnCompleteListener({ task ->
+                Toast.makeText(this,
+                    "Token gerado/recuperado ${task.result}",
+                    Toast.LENGTH_LONG).show()
+                return@addOnCompleteListener
+            })
     }
 
     private fun signOut() {
